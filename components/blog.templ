@@ -1,0 +1,68 @@
+package components
+
+import (
+	dto_output "blog/dto/output"
+	"strconv"
+)
+
+templ blog(posts []*dto_output.PostMetadata, current_page int, total_pages int, pages []int) {
+	<div class="max-w-4xl mx-auto p-6">
+		<div class="grid gap-4 mb-8">
+			for _, post := range posts {
+				<article>
+					<a href={ templ.SafeURL("/post/" + post.Filename) } class="text-xl font-semibold mb-2 block">
+						{ post.Title }
+					</a>
+					<time class="text-sm text-gray-500 font-medium">
+						{ post.Date.Format("2006-01-02 15:04") }
+					</time>
+				</article>
+			}
+		</div>
+		if len(pages) > 1 {
+			<nav class="flex justify-center items-center">
+				if current_page > 1 {
+					<a
+						href={ templ.SafeURL("/blog/" + strconv.Itoa(current_page-1)) }
+						class="px-2 py-2 text-sm font-medium"
+					>
+						← 
+					</a>
+				}
+				@pagination(current_page, pages)
+				if current_page < total_pages {
+					<a
+						href={ templ.SafeURL("/blog/" + strconv.Itoa(current_page+1)) }
+						class="px-2 py-2 text-sm font-medium"
+					>
+						→
+					</a>
+				}
+			</nav>
+			<div class="text-center mt-4">
+				<p class="text-sm text-gray-600">
+					Strona { strconv.Itoa(current_page) } / { total_pages }
+				</p>
+			</div>
+		}
+	</div>
+}
+
+templ pagination(current_page int, pages []int) {
+	// DRY but tailwind wouldn't detect it otherwise
+	for _ , page := range pages {
+		if page == current_page {
+			<a class="px-2 text-green-600">
+				{ strconv.Itoa(page) }
+			</a>
+		} else {
+			<a class="px-2" href={ templ.SafeURL("/blog/" + strconv.Itoa(page)) }>
+				{ strconv.Itoa(page) }
+			</a>
+		}
+	}
+}
+
+templ Blog(posts []*dto_output.PostMetadata, current_page int, total_pages int, pages []int) {
+	@Layout(blog(posts, current_page, total_pages, pages))
+}

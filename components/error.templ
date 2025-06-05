@@ -1,0 +1,14 @@
+package components
+
+templ errorPage(title, desc string) {
+	<div class="flex justify-center items-center">
+		<div class="text-center p-6 max-w-md mx-auto">
+			<h1 class="text-3xl font-bold mb-4">{ title }</h1>
+			<p class="text-lg mb-0">{ desc }</p>
+		</div>
+	</div>
+}
+
+templ ErrorPage(title, desc string) {
+	@Layout(errorPage(title, desc))
+}

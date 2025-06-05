@@ -1,0 +1,13 @@
+package components
+
+import dto_output "blog/dto/output"
+
+templ post(p *dto_output.Post) {
+	<article>
+		@templ.Raw(p.Content)
+	</article>
+}
+
+templ Post(p *dto_output.Post) {
+	@Layout(post(p))
+}

@@ -1,0 +1,30 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+@config "../../tailwind.config.js";
+
+@layer base {
+  :root {
+    --color-light-50: #ffffff;
+    --color-light-100: #f9f9f9;
+    --color-light-200: #f2f2f2;
+    --color-light-300: #ebebeb;
+    --color-light-400: #e4e4e4;
+    --color-light-500: #dddddd;
+    --color-light-600: #d6d6d6;
+    --color-light-700: #cfcfcf;
+    --color-light-800: #c8c8c8;
+    --color-light-900: #f0f0f0;
+
+    --color-green-50: #e9f7e5;
+    --color-green-100: #d3efcc;
+    --color-green-200: #bde7b3;
+    --color-green-300: #a7df9a;
+    --color-green-400: #91d17b;
+    --color-green-500: #7bb963;
+    --color-green-600: #65a14b;
+    --color-green-700: #4f8933;
+    --color-green-800: #39711b;
+    --color-green-900: #235903;
+  }
+}
+

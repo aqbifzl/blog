@@ -1,0 +1,48 @@
+package components
+
+import "blog/config"
+
+templ contact(conf *config.AppConfig) {
+	<div>
+		<h1>Kontakt</h1>
+		<p>
+			Na razie tylko przez e-mail, pewnie niedługo pojawi się więcej.
+		</p>
+		<p>Jak jakimś cudem nie masz maila to wyślij swoją wiadomość curlem na /contact, obiecuję, że co jakiś czas będę grepować logi.</p>
+		<ul>
+			<li>
+				Email: <a
+	href={ templ.SafeURL("mailto:" + conf.Email) }
+>{ conf.Email }</a>
+			</li>
+			<li>
+				<code>printf "Mam sprawę, odpisz na ..." | jq -sRr @uri | xargs -I { "{}" } curl https://{ conf.Domain }/contact?msg={ "{}" }</code>
+			</li>
+		</ul>
+		<h1>Social media</h1>
+		<p>
+			GitHub to też social media, prawda?
+		</p>
+		<ul>
+			<li>
+				GitHub: <a
+	href={ templ.SafeURL("https://github.com/" + conf.GitHub) }
+>github.com/{ conf.GitHub }</a>
+			</li>
+			<li>
+				Mój blog: <a href="/blog">~/Documents</a>
+			</li>
+		</ul>
+		<h2>Parę z moich stron</h2>
+		<ul>
+			<li>
+				<a href="https://hodowanko.pl">hodowanko.pl</a>
+				<em>To moja gra dzieciństwa, proszę nie oceniać przez pryzmat teraźniejszości, a w szczególności <a href="https://en.wikipedia.org/wiki/Dogecoin">Dogecoina</a>.</em>
+			</li>
+		</ul>
+	</div>
+}
+
+templ Contact(conf *config.AppConfig) {
+	@Layout(contact(conf))
+}

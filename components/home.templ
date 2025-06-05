@@ -1,0 +1,180 @@
+package components
+
+templ home() {
+	<h1>Witaj na mojej stronie</h1>
+	<h2>O mnie</h2>
+	<p>
+		Jestem uczniem z Polski, który lubi komputery, zarządzaniem nimi, a
+		przede wszystkim tworzenie oprogramowania.
+		<br/>
+		Głównie robię aplikacje internetowe, ale też temat ich
+		bezpieczeństwa.
+	</p>
+	<p>
+		Równie wielką pasją darzę Linuxa – używam go od wielu lat na
+		serwerach, jak i desktopie (jestem dumnym użytkownikiem <a
+	href="https://asahilinux.org/"
+>Asahi Linux</a>).
+	</p>
+	<p>
+		Mam też doświadczenie w embedded, udało mi się nawet stworzyć kilka
+		przydatnych rzeczy.
+	</p>
+	<h2>Web</h2>
+	<h3>Frontend</h3>
+	<ul>
+		<li>
+			<strong>Frameworki</strong>: Mój ulubiony i najczęściej używany to
+			<a href="https://react.dev/">React</a> ale gdy projekt tego nie wymaga,
+			lubię zrezygnować z jakichkolwiek.
+			<ul>
+				<li>
+					W tym drugim przypadku zarządzenie komponentami ułatwia mi <a
+	href="https://templ.guide/"
+>templ</a>.
+				</li>
+			</ul>
+		</li>
+		<li>
+			<strong>Stylowanie</strong>: Tailwind i tylko Tailwind, do animacji
+			w React również <a href="https://www.framer.com/">Framer</a>.
+		</li>
+	</ul>
+	<h3>Backend</h3>
+	<p>
+		Przez długi czas używałem wyłącznie <a
+	href="https://nextjs.org/"
+>Next.js</a> ale ostatnio <a
+	href="https://go.dev/"
+>Go</a> bardziej przypadł mi go gustu.
+	</p>
+	<p>
+		W Go do backendu używam <a
+	href="https://github.com/gin-gonic/gin"
+>Gin</a>.
+	</p>
+	<p>
+		Lubię też <a href="https://huma.rocks">Huma</a> który działa z Gin i
+		ułatwia pracę z OpenAPI - standardem który używam do tworzenia
+		wszelkiego rodzaju API.
+	</p>
+	<p>
+		Przy paru ciekawych projektach towarzyszył mi również <a
+	href="github.com/99designs/gqlgen"
+>gqlgen</a>. Naprawdę spodobał mi się
+		GraphQL.
+	</p>
+	<h2>Linux</h2>
+	<ul>
+		<li>Używam go wszędzie.</li>
+		<li>Używam go od wielu lat.</li>
+		<li>Nie sądzę, by to miało się zmienić.</li>
+		<li>Lubię self-hostować swoje i nie swoje rzeczy.</li>
+		<li>
+			Do wykonania zadań preferuję CLI, w którym robię wszystko.
+			<ul>
+				<li>
+					Prawie wszystko - nie oszukujmy się, rzeczy jak wykresy wyglądają
+					lepiej w przeglądarce.
+				</li>
+			</ul>
+		</li>
+	</ul>
+	<h3>Projekty</h3>
+	<p>
+		Chyba największym “projektem” jest mój Home Lab składający się z 4
+		hostów
+	</p>
+	<ul>
+		<li>
+			Hostuję na nim ponad 40 serwisów w dockerze, w tym X11 do grania w
+			gry, serwer plików, parę autorskich aplikacji internetowych oraz
+			Nextcloud.
+		</li>
+		<li>
+			Backupy w formie snapshotów Btrfs wysyłam z różnych urządzeń na
+			główny serwer.
+		</li>
+		<li>Mam skonfigurowany RAID 1.</li>
+		<li>
+			Cała sieć składa się z dwóch ruterów: MikroTik RB750Gr3 i Raspberry
+			Pi 4, który pełni role AP.
+		</li>
+	</ul>
+	<h2>Embedded</h2>
+	<p>
+		Lubię niskopoziomowe języki, w szczególności C/C++. Doświadczenie,
+		które zdobyłem, tworząc aplikacje CLI/GUI, ułatwiło mi rozpoczęcie
+		własnych projektów w embedded.
+	</p>
+	<h3>Projekty</h3>
+	<h4>Mini konsola do gier</h4>
+	<ul>
+		<li>
+			Tak właściwie jednej gry – wszystko zrobione samemu, wliczając
+			sterowniki do ekranu (OLED 128×64) i klawiatury z <a
+	href="https://www.sparkfun.com/mini-pushbutton-switch.html"
+>takich</a>
+			przycisków.
+		</li>
+		<li>Wykonane w C i AArch64 Assembly.</li>
+	</ul>
+	<h4>Transmitter IR</h4>
+	<ul>
+		<li>
+			Też użyłem do tego Raspberry Pi 4. Tym razem nie jest to bare metal,
+			ale całą transmisję IR zaimplementowałem samodzielnie w C.
+		</li>
+		<li>
+			Prosty serwer HTTP również napisałem w C, do zdalnego zarządzania z
+			panelu.
+		</li>
+		<li>
+			Głównym zastosowaniem tego projektu było sterowanie LED-ami, do
+			których pilot był problematyczny, a sterowanie nim niewygodne.
+		</li>
+	</ul>
+	<h4>Kontroler do rolet</h4>
+	<ul>
+		<li>
+			Chciałem, żeby moje rolety, które działały na zwykły przełącznik,
+			działały automatycznie.
+		</li>
+		<li>
+			Do realizacji tego użyłem <a
+	href="https://www.microchip.com/en-us/product/attiny85"
+>ATtiny85</a>,
+			trochę C i AVR Assembly.
+		</li>
+		<li>
+			Do komunikacji wykorzystałem 
+			<a
+				href="https://randomnerdtutorials.com/rf-433mhz-transmitter-receiver-module-with-arduino/"
+			>
+				prosty
+				moduł RF na 433Mhz
+			</a>.
+		</li>
+	</ul>
+	<h2>O stronie</h2>
+	<p>
+		Strona na którą patrzysz używa Go, Tailwind i Gin. Każdy artykuł to
+		zwykły HTML wygenerowany z Markdown, kod jest dostępny na GitHub.
+	</p>
+	<p>
+		<del>
+			Jeśli odnosisz wrażenie, że jest ona pisana przez kogoś kto
+			pierwszy raz użył Markdowna to masz dobrą intuicję.
+		</del>
+	</p>
+	<h2>Inne ciekawe rzeczy</h2>
+	<p>
+		<a href="/blog">~/Documents</a> - Mój blog, mam nadzieję, że nauczysz
+		się czegoś ciekawego. <a href="/contact"><code>sendmail</code></a> -
+		Kontakt do mnie.
+	</p>
+}
+
+templ Home() {
+	@Layout(home())
+}
