@@ -12,11 +12,11 @@ func SetupServer(conf *config.AppConfig) *gin.Engine {
 
 	r.Static("/static", "./static")
 
-	r.GET("/", GetHome)
-	SetupBlogHandlers(r)
+	SetupHomeHandlers(r, conf)
+	SetupBlogHandlers(r, conf)
 	SetupContactHandler(r, conf)
 	r.NoRoute(func(c *gin.Context) {
-		core.NotFoundPage(c)
+		core.NotFoundPage(c, conf)
 	})
 
 	return r

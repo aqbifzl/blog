@@ -1,11 +1,13 @@
 package components
 
+import "blog/config"
+
 templ footer() {
 	<footer class="border-t">
 		<p class="text-sm mb-0 text-center">Strona aqbifzl 🄯 1970 Wszystkie prawa niestrzeżone </p>
 	</footer>
 }
 
-templ Footer() {
-	@Layout(footer())
+templ Footer(conf *config.AppConfig) {
+	@Layout(conf, footer())
 }

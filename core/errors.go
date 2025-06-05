@@ -1,8 +1,9 @@
 package core
 
 import (
-	"net/http"
 	"blog/components"
+	"blog/config"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,21 +16,21 @@ var (
 	BadRequest               = "Nieprawidłowe zapytanie"
 )
 
-func BadRequestPage(c *gin.Context, desc string) {
+func BadRequestPage(c *gin.Context, desc string, conf *config.AppConfig) {
 	c.Status(http.StatusBadRequest)
-	if err := components.ErrorPage(NotFoundTitle, desc).Render(c, c.Writer); err != nil {
-		InternalServerErrorPage(c)
+	if err := components.ErrorPage(NotFoundTitle, desc, conf).Render(c, c.Writer); err != nil {
+		InternalServerErrorPage(c, conf)
 	}
 }
 
-func NotFoundPage(c *gin.Context) {
+func NotFoundPage(c *gin.Context, conf *config.AppConfig) {
 	c.Status(http.StatusNotFound)
-	if err := components.ErrorPage(NotFoundTitle, NotFoundDesc).Render(c, c.Writer); err != nil {
-		InternalServerErrorPage(c)
+	if err := components.ErrorPage(NotFoundTitle, NotFoundDesc, conf).Render(c, c.Writer); err != nil {
+		InternalServerErrorPage(c, conf)
 	}
 }
 
-func InternalServerErrorPage(c *gin.Context) {
+func InternalServerErrorPage(c *gin.Context, conf *config.AppConfig) {
 	c.Status(http.StatusInternalServerError)
-	_ = components.ErrorPage(InternalServerErrorTitle, InternalServerErrorDesc).Render(c, c.Writer)
+	_ = components.ErrorPage(InternalServerErrorTitle, InternalServerErrorDesc, conf).Render(c, c.Writer)
 }

@@ -1,5 +1,7 @@
 package components
 
+import "blog/config"
+
 templ home() {
 	<h1>Witaj na mojej stronie</h1>
 	<h2>O mnie</h2>
@@ -175,6 +177,6 @@ templ home() {
 	</p>
 }
 
-templ Home() {
-	@Layout(home())
+templ Home(conf *config.AppConfig) {
+	@Layout(conf, home())
 }

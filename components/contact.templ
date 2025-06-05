@@ -44,5 +44,5 @@ templ contact(conf *config.AppConfig) {
 }
 
 templ Contact(conf *config.AppConfig) {
-	@Layout(contact(conf))
+	@Layout(conf, contact(conf))
 }

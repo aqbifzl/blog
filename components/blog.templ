@@ -1,6 +1,7 @@
 package components
 
 import (
+	"blog/config"
 	dto_output "blog/dto/output"
 	"strconv"
 )
@@ -63,6 +64,6 @@ templ pagination(current_page int, pages []int) {
 	}
 }
 
-templ Blog(posts []*dto_output.PostMetadata, current_page int, total_pages int, pages []int) {
-	@Layout(blog(posts, current_page, total_pages, pages))
+templ Blog(posts []*dto_output.PostMetadata, current_page int, total_pages int, pages []int, conf *config.AppConfig) {
+	@Layout(conf, blog(posts, current_page, total_pages, pages))
 }

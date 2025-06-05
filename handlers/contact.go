@@ -1,10 +1,10 @@
 package handlers
 
 import (
-	"fmt"
 	"blog/components"
 	"blog/config"
 	"blog/core"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,7 +24,7 @@ func SetupContactHandler(r *gin.Engine, conf *config.AppConfig) *ContactHandler 
 func (h ContactHandler) GetContact(c *gin.Context) {
 	if err := components.Contact(h.conf).Render(c, c.Writer); err != nil {
 		fmt.Printf("contact rendering: %q", err)
-		core.InternalServerErrorPage(c)
+		core.InternalServerErrorPage(c, h.conf)
 		return
 	}
 }

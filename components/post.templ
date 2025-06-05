@@ -1,6 +1,9 @@
 package components
 
-import dto_output "blog/dto/output"
+import (
+	"blog/config"
+	dto_output "blog/dto/output"
+)
 
 templ post(p *dto_output.Post) {
 	<article>
@@ -8,6 +11,6 @@ templ post(p *dto_output.Post) {
 	</article>
 }
 
-templ Post(p *dto_output.Post) {
-	@Layout(post(p))
+templ Post(p *dto_output.Post, conf *config.AppConfig) {
+	@Layout(conf, post(p))
 }

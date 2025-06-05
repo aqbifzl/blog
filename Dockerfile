@@ -22,7 +22,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o blog
 
 FROM alpine:3.19
 WORKDIR /app
-COPY --from=builder /app/blog ./voting_app
+COPY --from=builder /app/blog ./blog
 COPY --from=builder /app/posts ./posts
 COPY --from=tailwind_builder /app/static ./static
-CMD ["/app/voting_app", "serve"]
+CMD ["/app/blog", "serve"]

@@ -1,15 +1,15 @@
 package handlers
 
 import (
-	"errors"
-	"fmt"
-	"math"
-	"net/http"
 	"blog/components"
 	"blog/config"
 	"blog/core"
 	"blog/services"
 	"blog/utils"
+	"errors"
+	"fmt"
+	"math"
+	"net/http"
 	"os"
 	"path/filepath"
 	"sort"
@@ -20,11 +20,13 @@ import (
 
 type BlogHandler struct {
 	BlogService *services.BlogService
+	conf        *config.AppConfig
 }
 
-func SetupBlogHandlers(r *gin.Engine) {
+func SetupBlogHandlers(r *gin.Engine, conf *config.AppConfig) {
 	blog_handler := BlogHandler{
 		BlogService: services.NewBlogService(),
+		conf:        conf,
 	}
 
 	r.GET("/blog", blog_handler.GetPosts)
@@ -42,13 +44,13 @@ func (h BlogHandler) handle_posts(c *gin.Context, page int) {
 	if err != nil {
 		fmt.Printf("getting posts: %q", err)
 
-		core.InternalServerErrorPage(c)
+		core.InternalServerErrorPage(c, h.conf)
 		return
 	}
 
 	if len(posts) < 1 {
-		if err := components.ErrorPage("Nie ma postów", "Proszę o cierpliwość").Render(c, c.Writer); err != nil {
-			core.InternalServerErrorPage(c)
+		if err := components.ErrorPage("Nie ma postów", "Proszę o cierpliwość", h.conf).Render(c, c.Writer); err != nil {
+			core.InternalServerErrorPage(c, h.conf)
 		}
 		return
 	}
@@ -56,7 +58,7 @@ func (h BlogHandler) handle_posts(c *gin.Context, page int) {
 	pages := int(math.Ceil(float64(len(posts)) / config.POSTS_PER_PAGE))
 
 	if page > pages {
-		core.NotFoundPage(c)
+		core.NotFoundPage(c, h.conf)
 		return
 	}
 
@@ -68,9 +70,9 @@ func (h BlogHandler) handle_posts(c *gin.Context, page int) {
 	last := first_post + config.POSTS_PER_PAGE
 	posts = posts[first_post:min(last, len(posts))]
 
-	if err := components.Blog(posts, page, pages, utils.GetPageList(page, pages)).Render(c, c.Writer); err != nil {
+	if err := components.Blog(posts, page, pages, utils.GetPageList(page, pages), h.conf).Render(c, c.Writer); err != nil {
 		fmt.Printf("rendering blog: %q", err)
-		core.InternalServerErrorPage(c)
+		core.InternalServerErrorPage(c, h.conf)
 		return
 	}
 }
@@ -97,17 +99,17 @@ func (h BlogHandler) GetPosts(c *gin.Context) {
 func (h BlogHandler) GetPost(c *gin.Context) {
 	name := c.Param("name")
 	if len(name) < 1 || !utils.IsFilenameSafe(name) {
-		core.BadRequestPage(c, "Podejrzany url")
+		core.BadRequestPage(c, "Podejrzany url", h.conf)
 		return
 	}
 
 	path := filepath.Join("./posts", filepath.Clean(name))
 	if _, err := os.Stat(path); err != nil {
 		if errors.Is(err, os.ErrNotExist) {
-			core.NotFoundPage(c)
+			core.NotFoundPage(c, h.conf)
 		} else {
 			fmt.Printf("checking if path %q exists: %q", path, err)
-			core.InternalServerErrorPage(c)
+			core.InternalServerErrorPage(c, h.conf)
 		}
 		return
 	}
@@ -115,13 +117,13 @@ func (h BlogHandler) GetPost(c *gin.Context) {
 	post, err := h.BlogService.GetBlogPost(path)
 	if err != nil {
 		fmt.Printf("getting blog post: %q", err)
-		core.InternalServerErrorPage(c)
+		core.InternalServerErrorPage(c, h.conf)
 		return
 	}
 
-	if err := components.Post(post).Render(c, c.Writer); err != nil {
+	if err := components.Post(post, h.conf).Render(c, c.Writer); err != nil {
 		fmt.Printf("rendering post: %q", err)
-		core.InternalServerErrorPage(c)
+		core.InternalServerErrorPage(c, h.conf)
 		return
 	}
 }

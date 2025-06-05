@@ -1,5 +1,7 @@
 package components
 
+import "blog/config"
+
 templ errorPage(title, desc string) {
 	<div class="flex justify-center items-center">
 		<div class="text-center p-6 max-w-md mx-auto">
@@ -9,6 +11,6 @@ templ errorPage(title, desc string) {
 	</div>
 }
 
-templ ErrorPage(title, desc string) {
-	@Layout(errorPage(title, desc))
+templ ErrorPage(title, desc string, conf *config.AppConfig) {
+	@Layout(conf, errorPage(title, desc))
 }
