@@ -18,10 +18,12 @@ func (c *BindConfig) AsAddress() string {
 }
 
 type AppConfig struct {
-	Bind   BindConfig `envPrefix:"BIND_"`
-	Email  string     `env:"EMAIL,notEmpty"`
-	GitHub string     `env:"GITHUB,notEmpty"`
-	Domain string     `env:"DOMAIN,notEmpty"`
+	Bind           BindConfig `envPrefix:"BIND_"`
+	Email          string     `env:"EMAIL,notEmpty"`
+	GitHub         string     `env:"GITHUB,notEmpty"`
+	Domain         string     `env:"DOMAIN,notEmpty"`
+	PosthogApiKey  string     `env:"POSTHOG_API_KEY,notEmpty"`
+	PosthogApiHost string     `env:"POSTHOG_API_HOST,notEmpty"`
 }
 
 func NewConfig() (*AppConfig, error) {
