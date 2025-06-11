@@ -3,7 +3,7 @@ module blog
 go 1.24.3
 
 require (
-	github.com/a-h/templ v0.3.887
+	github.com/a-h/templ v0.3.898
 	github.com/caarlos0/env/v11 v11.3.1
 	github.com/gin-gonic/gin v1.10.1
 	github.com/urfave/cli/v2 v2.27.6
