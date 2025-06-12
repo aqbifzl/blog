@@ -1,0 +1,91 @@
+title:Instalacja i konfiguracja MikroTik'a z CLI, bez WinBox'a
+date:2025-06-12 21:00
+## Moja historia
+
+Jakiś czas temu, postanowiłem podzielić moją sieć domową, żeby ułatwić jej monitorowanie i zarządzanie.
+W tym celu kupiłem MikroTik RB750Gr3.
+
+---
+
+## Pierwsze logowanie do MikroTika
+
+Najczęściej logowanie odbywa się za pomocą programu Winbox, którego jednak odradzam używać. Doświadczyłem z nim problemów, a po wpisach na ich forum wnioskuję, że jest to częste.
+
+W dodatku uważam, że zawsze lepiej pracować w "czystym" systemie, by rozumieć co robimy i umieć to odtworzyć.
+
+### Mac-Telnet
+
+Urządzenia MikroTik'a wspierają własnościowy protokół Mac-Telnet.
+
+Jak nazwa wskazuje, działa on na warstwie 2 (używa MAC do komunikacji), więc nie wymaga skonfigurowanego IP ani serwera DHCP.
+
+Istnieją [otwarte implementacje Mac-Telnet](https://github.com/haakonnessjoen/MAC-Telnet), ale w moim przypadku nie działały. Możesz spróbować ich użyć, jeśli masz szczęście, ale najpierw przeczytaj do końca.
+
+---
+
+## Netinstall - najlepsze rozwiązanie
+
+`Netinstall` to inaczej `network install`, służy do całkowitej reintalacji systemu na urządzeniu.
+
+Na [stronie MikroTik](https://mikrotik.com/download) dostępne jest narzędzie do Netinstall'a w formie CLI.
+
+Umożliwia on zainstalowanie nowego obrazu systemu RouterOS z możliwością konfiguracji, np. włączenia serwera SSH.
+
+### Przygotowanie
+
+1. Przejdź na stronę [MikroTik Download](https://mikrotik.com/download) i pobierz:  
+   - **Netinstall (CLI Linux)**  
+   - **Main package** dla architektury Twojego urządzenia (dla RB750Gr3 jest to MMIPS).
+2. Ustaw statyczne IP komputera np. `192.168.88.x` (gdzie `x jest inne niż 1`), a domyślną bramę na `192.168.88.1`.
+
+Nie będę opisywał jak to zrobić bo wszyscy mamy swoje preferencje, ja używam NetworkManager'a i polecenia nmcli.
+
+### Uruchomienie Netinstall
+
+> **UWAGA**: Przed wykonaniem tych poleceń przeczytaj artykuł do końca!!!
+
+W katalogu z pobranymi plikami uruchom:
+
+```bash
+sudo ./netinstall-cli -o -r -a 192.168.88.1 ./routeros-*.npk
+```
+
+- `-o` – jednorazowa instalacja (opcjonalne)  
+- `-r` – użycie domyślnej konfiguracji
+- `-a` – adres IP przypisany routerowi  
+- `./routeros-*.npk` – pobrany obraz systemu
+
+Następnie
+
+0. Wyłącz router.
+1. Podłącz swój komputer na którym działa `netinstall-cli` do pierwszego z lewej portu na routerze - ether1
+2. Przytrzymaj przycisk RESET.  
+3. Włącz zasilanie (ciągle trzymając RESET), poczekaj aż zobaczysz:  
+   - miganie
+   - światło ciągłe
+   - zgaśnięcie
+4. W terminalu powinna pojawić się informacja o zaczęciu instalacji, poczekaj aż wyświetli się komunikat o pomyślnym zakończeniu.
+
+Brawo! Twój MikroTik jest gotowy do pracy na domyślnych ustawianiach.
+
+---
+
+## Ale czy da się to zrobić jeszcze lepiej?
+
+Według mnie tak. Zamiast flagi `-r` (która ustawia domyślną konfigurację), użyj `-s` i podaj plik z rozszerzeniem .rsc (bez powinno również działać).
+
+### Przykład
+
+Do pliku `config.rsc` zapisz jakąś konfiguracje, jest to po prostu skrypt zawierający komendy RouterOS'a.
+```rsc
+/user
+set admin password=jakies_haslo
+```
+Jak nie trudno zgadnąć, skrypt ustawia hasło dla admina na `jakies_haslo`.
+
+Najlepszą opcją jest według mnie konfiguracja IP, serwera DHCP i włączenie SSH. Zalecam logowanie kluczem SSH.
+[Tutaj](https://help.mikrotik.com/docs/spaces/ROS/pages/132350014/SSH) znajdziesz przydatną dokumentacje.
+
+## Podsumowanie
+
+W ten sposób moja instalacja i konfiguracja MikroTik'a przebiegła bezboleśnie, mam nadzieję, że komuś ułatwiłem życie :)
