@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"blog/config"
-	"blog/core"
+	"blog/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -10,14 +10,11 @@ import (
 func SetupServer(conf *config.AppConfig) *gin.Engine {
 	r := gin.Default()
 
-	r.Static("/static", "./static")
-
 	SetupHomeHandlers(r, conf)
 	SetupBlogHandlers(r, conf)
 	SetupContactHandler(r, conf)
-	r.NoRoute(func(c *gin.Context) {
-		core.NotFoundPage(c, conf)
-	})
+
+	r.NoRoute(middleware.SPAMiddleware(conf))
 
 	return r
 }
