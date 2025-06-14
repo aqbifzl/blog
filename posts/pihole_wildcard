@@ -1,0 +1,57 @@
+title:Jak zrobić "wildcard" na wszystkie sub-domeny z Pi-hole
+date:2025-06-14 18:00
+# Pi-hole
+
+Pi-hole to self-hosted DNS który ułatwia monitorowanie zapytań i blokowanie reklam (i dużo więcej).
+
+Ale sporo osób, w tym ja, używa go jako DNS do dodawania własnych lokalnych domen które są dostępne na każdym urządzeniu domowym. Jednak, dodawanie ich ręcznie jest uciążliwe gdy mamy wiele serwisów.
+
+Wtedy przypominamy sobie o wildcardach czyli rekordzie w DNS który odpowiada każdej nieistniejącej subdomenie. Wildcardy działają z "normalnymi" domenami więc może by spróbować ustawić *.domena.local w Pi-hole'u? Szybko okazuje się, że nie jest to możliwe bezpośrednio z panelu.
+
+## A pośrednio?
+Tak. dnsmasq, którego używa Pi-hole wspiera ustawienie takiej konfiguracji, potrzebujemy jedynie włączyć niestandardowe konfiguracje dla wspomnianego dnsmasq.
+
+Wystarczy ustawić zmienną środowiskową `FTLCONF_misc_etc_dnsmasq_d` na `true`, w przypadku Docker Compose wystarczy:
+```
+environment:
+  ...
+  FTLCONF_misc_etc_dnsmasq_d: true
+```
+
+Teraz utworzyć konfiguracje w folderze `/etc/dnsmasq.d` w kontenerze, najlepiej dodać to przez volume.
+```
+volumes:
+  ...
+  - 'pihole_etc_dnsmasqd:/etc/dnsmasq.d'
+```
+
+> Możesz użyć też [bind mount](https://docs.docker.com/engine/storage/bind-mounts/) i podać ścieżkę do folderu zamiast pihole_etc_dnsmasqd
+
+W folderze tworzymy dowolny plik z rozszerzeniem .conf, ja go nazwałem `wildcard.conf`
+
+Do pliku trzeba wpisać
+```
+address=/.domena.local/xxx.xxx.xxx.xxx
+```
+
+Gdzie domena to nasza domena, nie musi być oczywiście `.local` a `xxx.xxx.xxx.xxx` zamieniamy na adres IP na który mają wskazywać sub-domeny. 
+
+Przykład:
+```
+address=/.serwerdomowy.local/192.168.1.5
+```
+
+Kontener powinien zostać zrestartowany, `docker restart nazwa_kontenera`
+
+Po wszystkim można z dowolnego komputera sprawdzić czy wszystko działa poprawnie za pomocą polecenia `dig`.
+
+```dig +short subdomena.domena.local @ip_serwera```
+
+Na przykład:
+```dig +short test.serwerdomowy.local @192.168.1.1```
+
+Polecenie powinno zwrócić adres który został podany w `wildcard.conf`.
+
+## Zakończenie
+
+Dziękuję za czytanie :)
