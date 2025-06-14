@@ -1,6 +1,6 @@
 title:Jak zrobić "wildcard" na wszystkie sub-domeny z Pi-hole
 date:2025-06-14 18:00
-# Pi-hole
+# Jak zrobić "wildcard" na wszystkie sub-domeny z Pi-hole?
 
 Pi-hole to self-hosted DNS który ułatwia monitorowanie zapytań i blokowanie reklam (i dużo więcej).
 
