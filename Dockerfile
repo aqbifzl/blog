@@ -4,7 +4,7 @@ COPY . .
 RUN npm install
 RUN npx tailwindcss -i /app/static/css/style.css -o /app/static/css/tailwind.css -m
 
-FROM golang:1.24-alpine AS go_modules
+FROM golang:1.25-alpine AS go_modules
 WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
