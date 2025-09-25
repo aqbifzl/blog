@@ -1,0 +1,129 @@
+title:O rdfind, czyszczeniu dysków i plikach których nie backupować
+date:2025-09-25 20:00
+
+## Wstęp
+Ten artykuł poświęcam narzędziu, które niedawno odkryłem i które bardzo ułatwiło mi porządkowanie dysku.
+
+Kontekst jest taki: od zawsze robiłem backupy, używając różnych narzędzi takich jak ```rsync``` czy ```tar```. Ale nigdy nie lubiłem usuwać starych backupów, zawsze miałem wrażenie, że **jeszcze kiedyś** usunięte pliki się przydadzą.
+
+Stwierdziłem jednak, że trzeba z tym zrobić porządek. Duża ilość plików tylko spowalniała operacje jak szukanie po zawartości lub nazwie pliku. A część bardzo starych kopii zawierała foldery, które nigdy nie powinny się znaleść w backupie.
+
+Zdecydowałem się skupić na dwóch etapach:
+
+1. Usunięcie katalogów i typów plików, które na pewno nie będą mi potrzebne.
+2. Deduplikacja pozostałych danych.
+
+> Jeśli ktoś jest ciekawy, teraz używam [BorgBackup](https://www.borgbackup.org/) z lekko zmodyfikowaną konfiguracją z [dokumentacji NixOS](https://nixos.wiki/wiki/Borg_backup). BorgBackup sam zajmuje się deduplikacją, kompresją i szyfrowaniem kopii zapasowych.
+
+Wtedy odkryłem narzędzie ```rdfind```. Jest to narzędzie do szukania duplikatów które pozwala również na akcje takie jak zastąpienie duplikatów symlinkami.
+
+## Przygotowanie
+
+- Rozpakowałem wszystkie archiwa i przeniosłem foldery backupów w jedno miejsce.
+- W katalogu z backupami uruchomiłem `updatedb`, żeby mieć szybkie indeksowanie (dla `locate`/`updatedb`).
+- Następnie przejrzałem pliki i stworzyłem listę potencjalnie zbędnych katalogów i typów plików.
+
+> **Uwaga**
+>
+> Poniższe sugestie dotyczące katalogów/plików są subiektywne i służą tylko jako wskazówka. W niektórych przypadkach mogą się w nich znajdować bardzo ważne dane. **upewnij się, że wiesz, co usuwasz**.
+
+```
+.cache
+.cargo
+go
+usr
+bin
+sbin
+boot
+lib
+lib64
+tmp
+nix
+.next
+
+/var/cache/distfiles
+/var/cache/pacman
+/var/db/repos
+SecLists
+
+node_modules
+*initrd*
+*linux*
+*vmlinuz*
+
+restore
+*~
+to_remove
+
+*.iso
+*.img
+*.img.zst
+
+cache2
+Cache
+.npm or .npm/_cacache
+*/_build
+.venv
+venv
+```
+
+Lista nie jest oczywiście kompletna, ale wielkość moich danych po usunięciu tych plików była zadowalająca. 
+
+---
+
+## Deduplikacja z `rdfind`
+
+### `rdfind --help`
+
+```
+Usage: rdfind [options] FILE ...
+
+Finds duplicate files recursively in the given FILEs (directories),
+and takes appropriate action (by default, nothing).
+Directories listed first are ranked higher, meaning that if a
+file is found on several places, the file found in the directory first
+encountered on the command line is kept, and the others are considered duplicate.
+
+options are (default choice within parentheses)
+
+ -ignoreempty      (true)| false  ignore empty files (true implies -minsize 1,
+                                  false implies -minsize 0)
+ -minsize N        (N=1)          ignores files with size less than N bytes
+ -maxsize N        (N=0)          ignores files with size N bytes and larger (use 0 to disable this check).
+ -followsymlinks    true |(false) follow symlinks
+ -removeidentinode (true)| false  ignore files with nonunique device and inode
+ -checksum           md5 |(sha1)| sha256
+                                  checksum type
+ -deterministic    (true)| false  makes results independent of order
+                                  from listing the filesystem
+ -makesymlinks      true |(false) replace duplicate files with symbolic links
+ -makehardlinks     true |(false) replace duplicate files with hard links
+ -makeresultsfile  (true)| false  makes a results file
+ -outputname  name  sets the results file name to "name" (default results.txt)
+ -deleteduplicates  true |(false) delete duplicate files
+ -sleep              Xms          sleep for X milliseconds between file reads.
+                                  Default is 0. Only a few values
+                                  are supported; 0,1-5,10,25,50,100
+ -dryrun|-n         true |(false) print to stdout instead of changing anything
+ -h|-help|--help                  show this help and exit
+ -v|--version                     display version number and exit
+
+If properly installed, a man page should be available as man rdfind.
+
+rdfind is written by Paul Dreik 2006 onwards. License: GPL v2 or later (at your option).
+version is 1.5.0
+```
+
+## Właściwa deduplikacja
+
+W moim przypadku, po odfiltrowaniu i usunięciu oczywistych śmieci, zdecydowałem się na użycie tej komendy w folderze z backupami:
+
+```rdfind -checksum md5 -deterministic false -deleteduplicates true *```
+
+Wybrałem `md5` jako algorytm i wyłączyłem deterministyczność (`-deterministic false`), żeby przyspieszyć proces. Akceptowałem związane z tym niewielkie ryzyko kolizji MD5. Zdecydowałem się też na **usuwanie duplikatów** zamiast zastępowania ich linkami, żeby uniknąć nieporzebnego narzutu, np. związanego z inode'ami.
+
+## Zakończenie
+
+W ten sposób zaoszczędziłem sporo zasobów mająć pewność że nie usunąłem nic ważnego.
+
+Dziękuję za czytanie :)
