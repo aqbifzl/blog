@@ -14,7 +14,7 @@ WORKDIR /app
 COPY --chown=65532:65532 . .
 RUN ["templ", "generate", "-path", "components/"]
 
-FROM golang:1.24-alpine AS builder
+FROM golang:1.25-alpine AS builder
 WORKDIR /app
 COPY --from=go_modules /app/go.mod /app/go.sum ./
 COPY --from=templ_builder /app /app
