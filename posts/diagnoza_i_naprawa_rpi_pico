@@ -1,0 +1,86 @@
+title:Naprawa i diagnoza uszkodzonego rpi Pico 2 - jak debugować zwarcie
+date:2025-11-23 20:00
+# Wstęp
+
+Nie lubię wyrzucać "zepsutych" rzeczy, wszystko, co da się naprawić lub wykorzystać ponownie, ląduje w mojej szufladzie. Czasem właśnie tam znajduję potrzebne elementy lub płytki.
+
+Kiedyś z jakiegoś powodu, trafił tam Raspberry Pi Pico 2. Nie dało się go flashować przez debug probe, a wgrywanie firmware'u przez USB również zawodziło.
+
+Kiedy go dotknąłem, był bardzo gorący, od razu odłączyłem zasilanie i wziąłem się do diagnozy.
+
+# Pierwszy krok - analiza "na oko"
+
+## Widoczne wady
+Według mnie dobrym pierwszym krokiem jest sprawdzenie wizualnie, czy na płytce nie ma żadnych oczywistych oznak uszkodzeń, jak spalenia, pozostała cyna czy topnik.
+
+W moim przypadku wszystko było okej.
+
+## Brakujące komponenty
+Druga opcja to brakujące komponenty. Nie jest to jedyne Raspberry Pico jakie miałem, więc mogłem je po prostu porównać.
+Jeśli nie masz takiej możliwości, zajrzyj do dokumentacji swojej płytki.
+
+Dla Raspberry Pico jest to [ten dokument](https://pip-assets.raspberrypi.com/categories/610-raspberry-pi-pico/documents/RP-008307-DS-1-pico-datasheet.pdf).
+
+Raspberry Pi trzyma dokumentację w [jednym miejscu](https://datasheets.raspberrypi.com/).
+
+Gdy brakuje dokumentacji, a masz drugą identyczną płytkę, możesz po prostu wylutować dany element i sprawdzić multimetrem jaką ma rezystancje.
+
+Już na tym etapie znalazłem problem, z jakiegoś powodu brakowało rezystora R5 (według wyżej wspomnianego PDFa). Po sposobie ułożenia cyny widać było, że został wyrwany.
+
+Ja, korzystając ze schematu, dobrałem odpowiedni rezystor i wlutowałem go przy pomocy hot-aira.
+
+# Może błędne lutowanie?
+Ponieważ zawsze samodzielnie lutuję pinheadery, mogłem popełnić błąd właśnie tam.
+
+W multimetrze włączyłem "continuity testing" i sprawdziłem każde sąsiadujące piny.
+
+W rpi Pico warto zwrócić uwagę na pin RUN, jeśli jest połączony z GND, RP2040 będzie się ciągle resetował.
+
+W moim przypadku wszystko było okej, trzeba szukać dalej.
+
+# Test poboru prądu
+Skoro układ jest gorący, ile prądu pobiera?
+
+![multimetr](/multimetr.jpg "Multimetr")
+
+Jeśli mamy zwarcie to napięcie będzie duże, więc podłącz jedną sondę do wejścia 10A, a drugą do COM - tak jest w większości multimetrów.
+
+Teraz włącz zakres 10A i podłącz płytkę równolegle. Ja zrobiłem to podłączając zepsutą płytkę do innego Raspberry przez piny w ten sposób:
+
+![podłączenie multimetra](/mmwiring.png "Podłączenie multimetra")
+
+Test pokazał że, Raspberry bierze 0.5A(!)
+
+Wtedy było jasne, że jest to zwarcie.
+
+# Test rezystancji
+
+Teraz tylko znaleźć gdzie zwarcie występuje. Zacząłem od pomiaru rezystancji pinów zasilających względem GND.
+
+### VSYS i VBUS z GND.
+
+Rezystancja była wyższa niż na działającej płytce (około 10kΩ), czyli jest to raczej dobry znak.
+
+Gdy mamy do czynienia ze zwarciem rezystancja jest przecież bardzo niska.
+
+### 3.3V out z GND
+
+Tu była odpowiedź na moje pytanie, rezystancja około 20Ω.
+
+Wniosek? MCU jest wewnętrznie uszkodzone. Jeśli bym nie miał RP2040 na zmianę, to naprawa byłaby nieopłacalna.
+
+Na szczęście miałem skąd wylutować drugi :)
+
+# Wymiana MCU
+
+Tu nie ma wielkiej filozofii. Ustawiłem hot-air na około 450°C, nałożyłem flux i równomiernie podgrzewałem układ, aż RP2040 dał się zdjąć. 
+
+Od razu po tym, nałożyłem inne RP2040 i lekko poprzesuwałem, aż od boku było widać prawidłowe osiadanie.
+
+Nie jestem pewien, czy nie powinno się usunąć starej cyny i nałożyć nowej, nie miałem tyle doświadczenia z lutowaniem SMD, ale ostatecznie układ zadziałał.
+
+![pico bez rp2040](/pico1.png "Wylutowane rp2040")
+![wlutowane rp2040](/pico2.png "Wlutowane rp2040")
+
+# Koniec
+Klasycznie dzięki za czytanie (づ> v <)づ♡
