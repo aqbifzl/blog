@@ -16,6 +16,9 @@ templ contact(conf *config.AppConfig) {
 >{ conf.Email }</a>
 			</li>
 			<li>
+				Matrix: @aqbifzl:m.aqbifzl.pl
+			</li>
+			<li>
 				<code>printf "Mam sprawę, odpisz na ..." | jq -sRr @uri | xargs -I { "{}" } curl https://{ conf.Domain }/contact?msg={ "{}" }</code>
 			</li>
 		</ul>
